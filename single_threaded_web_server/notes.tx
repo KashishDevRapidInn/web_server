@@ -1,0 +1,27 @@
+1. Creating a Buffered Reader:
+        let buf_reader = BufReader::new(&mut stream);
+        Purpose: Wraps stream in a BufReader for efficient reading with buffering.
+        Usage: Improves performance by reducing the number of I/O operations.
+
+2. Reading and Processing HTTP Request:
+        let http_request: Vec<_> = buf_reader
+            .lines()
+            .map(|result| result.unwrap())
+            .take_while(|line| !line.is_empty())
+            .collect();
+
+        buf_reader.lines(): Creates an iterator over lines from the stream.
+        .map(|result| result.unwrap()): Converts Result<String, Error> to String, panicking on error.
+        .take_while(|line| !line.is_empty()): Collects lines until an empty line (end of headers) is encountered.
+        .collect(): Gathers the lines into a Vec<String>.
+
+3. Defining the HTTP Response:
+        let response = "HTTP/1.1 200 OK\r\n\r\n";
+        Purpose: Specifies a basic HTTP 200 OK response.
+        Structure: "HTTP/1.1 200 OK\r\n\r\n" indicates a successful request with no content.
+
+4. Sending the Response:
+        stream.write_all(response.as_bytes()).unwrap();
+        response.as_bytes(): Converts the response string to a byte array.
+        stream.write_all(...): Sends the byte array to the client.
+        .unwrap(): Panics if writing to the stream fails (for simplicity; in real code, handle errors properly).
